@@ -35,8 +35,13 @@ function displayAnswers(userId) {
   const artist = getMostListenedArtist(userId);
   const artistAnswerElement = document.createElement("p");
   artistAnswerElement.textContent = `Most Listened artist (Count): ${artist}`;
+  const fridayNightSong = getFridayNightSong(userId);
+  if (fridayNightSong !== null) {
+  const fridayNightSongAnswerElement = document.createElement("p");
+  fridayNightSongAnswerElement.textContent = `Friday Night song (Count): ${fridayNightSong.artist} - ${fridayNightSong.title}`;
 
-  answersContainer.append(songAnswerElement, artistAnswerElement);
+  answersContainer.append(songAnswerElement, artistAnswerElement, fridayNightSongAnswerElement);
+}
 }
 
 //user's most often listened to song (Q-1)
@@ -97,12 +102,39 @@ return mostListenedArtist;
 
 }
 
-//
+//Users most often listened friday night song(Q-3)
 function getFridayNightSong(userId){
+  console.log("Function called for user:", userId);
   const events = getListenEvents(userId);
   for(const event of events){
+    console.log("Checking event:", event.timestamp);
 const date = new Date(event.timestamp);
 const day = date.getDay();
+if( (day === 5 && event.seconds_since_midnight >= 61200) || (day === 6 && event.seconds_since_midnight < 14400 )){
+const songCounts = {};
+for (const event of events){
+  const songId = event.song_id;
+  if(songId in songCounts){
+    songCounts[songId]++;
+  }
+  else {
+    songCounts[songId] = 1;
+
+}
+}
+let mostListenedSongId = null;
+let maxCount = 0;
+for (const songId in songCounts) {
+  if(songCounts[songId] > maxCount){
+    mostListenedSongId = songId;
+    maxCount = songCounts[songId];
+  }
+}
+if (mostListenedSongId === null) {
+  return null;
+}
+  return getSong(mostListenedSongId);
+}
   }
 
 }
