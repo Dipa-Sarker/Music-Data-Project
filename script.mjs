@@ -55,7 +55,6 @@ function displayAnswers(userId) {
   }
   {
   const fridayNightSong = getFridayNightSong(userId);
-  console.log("Friday night song (Count):", fridayNightSong);
   if (fridayNightSong !== null) {
   const paragraph = document.createElement("p");
   paragraph.textContent = `Friday Night song (Count): ${fridayNightSong.artist} - ${fridayNightSong.title}`;
@@ -64,7 +63,6 @@ function displayAnswers(userId) {
 }
 {
   const mostListenedSongOnFridayNightByTime = getMostListenedSongOnFridayNightByTime(userId);
-  console.log("Friday night song (Time):", mostListenedSongOnFridayNightByTime);
    if (mostListenedSongOnFridayNightByTime!== null) {
   const paragraph = document.createElement("p");
   paragraph.textContent = `Friday Night song (Time): ${mostListenedSongOnFridayNightByTime.artist} - ${mostListenedSongOnFridayNightByTime.title}`;
@@ -73,17 +71,24 @@ function displayAnswers(userId) {
 }
 {
 const result = getLongestStreakSong(userId);
-
-const paragraph = document.createElement("p");
-
 const songNames = result.songs.map(
   song => `${song.artist} - ${song.title}`
 );
-
+const paragraph = document.createElement("p");
 paragraph.textContent =
   `Longest Streak song: ${songNames.join(", ")} (length: ${result.streakLength})`;
-
 answersContainer.append(paragraph);
+}
+{
+  const everyDaySongs = getSongsListenedToEveryDay(userId);
+  if (everyDaySongs.length > 0) {
+    const songNames = everyDaySongs.map(
+      song => `${song.artist} - ${song.title}`
+    );
+    const paragraph = document.createElement("p");
+    paragraph.textContent = `Songs listened to every day: ${songNames.join(", ")}`;
+    answersContainer.append(paragraph);
+  }
 }
 }
 
@@ -295,6 +300,34 @@ return {
   songs: longestStreakSongIds.map(songId => getSong(songId)),
   streakLength: longestStreak
 };
+}
+
+// User's listen every day songs (Q-6)
+function getSongsListenedToEveryDay(userId){
+  const events = getListenEvents(userId);
+  const listeningDays = new Set();
+  for(const event of events){
+  const date = event.timestamp.slice(0, 10);
+  listeningDays.add(date);
+}
+const songDays = {};
+
+for (const event of events) {
+  const songId = event.song_id;
+  const date = event.timestamp.slice(0, 10);
+if (!songDays[songId]) {
+  songDays[songId] = new Set();
+}
+
+songDays[songId].add(date);
+  }
+  const everyDaySongIds = [];
+  for(const songId in songDays){
+if(songDays[songId].size === listeningDays.size){
+  everyDaySongIds.push(songId);
+}
+}
+return everyDaySongIds.map(songId => getSong(songId));
 }
 
 
