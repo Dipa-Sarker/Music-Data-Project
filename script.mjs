@@ -90,6 +90,25 @@ answersContainer.append(paragraph);
     answersContainer.append(paragraph);
   }
 }
+{
+  const topGenres = getTopGenres(userId);
+  if (topGenres.length > 0) {
+    const paragraph = document.createElement("p");
+
+    let heading;
+
+    if (topGenres.length === 3) {
+      heading = "Top three genres";
+    } else if (topGenres.length === 2) {
+      heading = "Top two genres";
+    } else {
+      heading = "Top genre";
+    }
+
+    paragraph.textContent = `${heading}: ${topGenres.join(", ")}`;
+    answersContainer.append(paragraph);
+  }
+}
 }
 
 //user's most often listened to song (Count) (Q-1)
@@ -330,6 +349,26 @@ if(songDays[songId].size === listeningDays.size){
 return everyDaySongIds.map(songId => getSong(songId));
 }
 
+//User's listened top 3 genres (Q-7)
+function getTopGenres(userId) {
+  const events = getListenEvents(userId);
+  const genreCounts = {};
+
+  for (const event of events) {
+    const song = getSong(event.song_id);
+    const genre = song.genre;
+
+    if (!genreCounts[genre]) {
+      genreCounts[genre] = 0;
+    }
+
+    genreCounts[genre]++;
+  }
+  const sortedGenres = Object.entries(genreCounts)
+  .sort((a, b) => b[1] - a[1]);
+  const topGenres = sortedGenres.slice(0, 3);
+  return topGenres.map(genre => genre[0]);
+}
 
 //display answer for most listened song when select an user
 select.addEventListener("change", function () {
