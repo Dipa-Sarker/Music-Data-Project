@@ -8,7 +8,7 @@ import {
 const select = document.getElementById("user-select");
 const answersContainer = document.getElementById("answers-container");
 
-//Function to display answers so it is reusable and DRY is obeyed
+//Display all applicable answers for the selected user
 function displayAnswers(userId) {
   const events = getListenEvents(userId);
 
@@ -314,7 +314,7 @@ function getTopGenres(userId) {
   return getTopGenresFromEvents(events, getSong);
 }
 
-//Display answer for all questions when select an user
+//What happens when select a user
 select.addEventListener("change", function () {
   displayAnswers(select.value);
 });
