@@ -1,8 +1,9 @@
 {
   "name": "project-music-data",
   "version": "1.0.0",
-  "main": "script.js",
+  "main": "script.mjs",
+  "type": "module",
   "scripts": {
-    "test": "node common.test.mjs"
+    "test": "node unit.test.mjs"
   }
 }

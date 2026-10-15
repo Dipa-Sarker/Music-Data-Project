@@ -1,16 +1,6 @@
-// This is a placeholder file which shows how you can access functions defined in other files.
-// It can be loaded into index.html.
-// You can delete the contents of the file once you have understood how it works.
-// Note that when running locally, in order to open a web page which uses modules, you must serve the directory over HTTP e.g. with https://www.npmjs.com/package/http-server
-// You can't open the index.html file using a file:// URL.
 
-/*import { countUsers } from "./common.mjs";
-
-
-window.onload = function () {
-  document.querySelector("body").innerText = `There are ${countUsers()} users`;
-}; */
 import { getListenEvents, getSong } from "./data.mjs";
+import { getSongsListenedToEveryDayFromEvents, getTopGenresFromEvents} from "./helpers.mjs";
 
 
 //DOM elements
@@ -18,17 +8,17 @@ const select = document.getElementById("user-select");
 const answersContainer = document.getElementById("answers-container");
 
 
-//function to display answers so it is reusable and DRY is obeyed
+//Function to display answers so it is reusable and DRY is obeyed
 function displayAnswers(userId) {
   const events = getListenEvents(userId);
 
   answersContainer.innerHTML = "";
-  //display message for no songs
+  //Display message for no songs
   if (!events || events.length === 0) {
     answersContainer.textContent = "This user didn't listen to any songs.";
     return;
   }
-  //create elements for displaying answers
+  //Create elements for displaying answers
   {
   const song = getMostListenedSong(userId);
   const paragraph = document.createElement("p");
@@ -111,7 +101,7 @@ answersContainer.append(paragraph);
 }
 }
 
-//user's most often listened to song (Count) (Q-1)
+//User's most often listened to song (Count) (Q-1)
 function getMostListenedSong(userId) {
 const events = getListenEvents(userId);
 const songCounts = {};
@@ -136,7 +126,7 @@ for (const songId in songCounts) {
 return getSong(mostListenedSongId);
 
 }
-//user's most often listened to song (Time) (Q-4)
+//User's most often listened to song (Time) (Q-4)
 function getMostListeningTimeSong(userId) {
 const events = getListenEvents(userId);
 const listeningTime = {};
@@ -164,7 +154,7 @@ return getSong(mostListenedSongId);
 }
 
 
-//user's most often listened to artist (Count)(Q-2)
+//User's most often listened to artist (Count)(Q-2)
 function getMostListenedArtist(userId) {
 const events = getListenEvents(userId);
 const artistCounts = {};
@@ -191,7 +181,7 @@ return mostListenedArtist;
 
 }
 
-//user's most often listened to artist (Time)(Q-4)
+//User's most often listened to artist (Time)(Q-4)
 function getMostListeningTimeArtist(userId) {
 const events = getListenEvents(userId);
 const artistTimes = {};
@@ -304,12 +294,13 @@ for (const event of events) {
       currentStreak = 1;
     }
   
-    //keep track the longest streak
+    //Keep track the longest streak
     if(currentStreak > longestStreak){
       longestStreak = currentStreak;
       longestStreakSongIds = [currentSongId];
     }
-    else if (currentStreak === longestStreak) { //if two songs has same length
+    //If two songs have same length
+    else if (currentStreak === longestStreak) { 
   if (!longestStreakSongIds.includes(currentSongId)) {
     longestStreakSongIds.push(currentSongId);
   }
@@ -321,56 +312,19 @@ return {
 };
 }
 
-// User's listen every day songs (Q-6)
+// User's listened every day songs (Q-6)
 function getSongsListenedToEveryDay(userId){
   const events = getListenEvents(userId);
-  const listeningDays = new Set();
-  for(const event of events){
-  const date = event.timestamp.slice(0, 10);
-  listeningDays.add(date);
-}
-const songDays = {};
-
-for (const event of events) {
-  const songId = event.song_id;
-  const date = event.timestamp.slice(0, 10);
-if (!songDays[songId]) {
-  songDays[songId] = new Set();
-}
-
-songDays[songId].add(date);
-  }
-  const everyDaySongIds = [];
-  for(const songId in songDays){
-if(songDays[songId].size === listeningDays.size){
-  everyDaySongIds.push(songId);
-}
-}
-return everyDaySongIds.map(songId => getSong(songId));
+return getSongsListenedToEveryDayFromEvents(events, getSong);
 }
 
 //User's listened top 3 genres (Q-7)
 function getTopGenres(userId) {
   const events = getListenEvents(userId);
-  const genreCounts = {};
-
-  for (const event of events) {
-    const song = getSong(event.song_id);
-    const genre = song.genre;
-
-    if (!genreCounts[genre]) {
-      genreCounts[genre] = 0;
-    }
-
-    genreCounts[genre]++;
-  }
-  const sortedGenres = Object.entries(genreCounts)
-  .sort((a, b) => b[1] - a[1]);
-  const topGenres = sortedGenres.slice(0, 3);
-  return topGenres.map(genre => genre[0]);
+  return getTopGenresFromEvents(events, getSong);
 }
 
-//display answer for most listened song when select an user
+//Display answer for all questions when select an user
 select.addEventListener("change", function () {
   displayAnswers(select.value);
 });
