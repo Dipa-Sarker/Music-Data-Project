@@ -1,5 +1,4 @@
-
- //User's listened every day songs (Q-6)
+//User's listened every day songs (Q-6)
 
 export function getSongsListenedToEveryDayFromEvents(events, getSong) {
   const listeningDays = new Set();
@@ -30,26 +29,25 @@ export function getSongsListenedToEveryDayFromEvents(events, getSong) {
     }
   }
 
-  return everyDaySongIds.map(songId => getSong(songId));
+  return everyDaySongIds.map((songId) => getSong(songId));
 }
 
 //User's listened top 3 genres (Q-7)
+
 export function getTopGenresFromEvents(events, getSong) {
-    const genreCounts = {};
-    
-      for (const event of events) {
-        const song = getSong(event.song_id);
-        const genre = song.genre;
-    
-        if (!genreCounts[genre]) {
-          genreCounts[genre] = 0;
-        }
-    
-        genreCounts[genre]++;
-      }
-      const sortedGenres = Object.entries(genreCounts)
-      .sort((a, b) => b[1] - a[1]);
-      const topGenres = sortedGenres.slice(0, 3);
-      return topGenres.map(genre => genre[0]);
+  const genreCounts = {};
+
+  for (const event of events) {
+    const song = getSong(event.song_id);
+    const genre = song.genre;
+
+    if (!genreCounts[genre]) {
+      genreCounts[genre] = 0;
     }
-    
+
+    genreCounts[genre]++;
+  }
+  const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
+  const topGenres = sortedGenres.slice(0, 3);
+  return topGenres.map((genre) => genre[0]);
+}

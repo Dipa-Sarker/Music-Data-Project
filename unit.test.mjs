@@ -1,13 +1,16 @@
 import assert from "node:assert";
 import test from "node:test";
-import { getSongsListenedToEveryDayFromEvents, getTopGenresFromEvents } from "./helpers.mjs";
+import {
+  getSongsListenedToEveryDayFromEvents,
+  getTopGenresFromEvents,
+} from "./helpers.mjs";
 
 // Sample songs used by both tests
 const songs = {
   "song-a": { id: "song-a", genre: "Pop" },
   "song-b": { id: "song-b", genre: "Folk" },
   "song-c": { id: "song-c", genre: "Punk" },
-  "song-d": { id: "song-d", genre: "Jazz" }
+  "song-d": { id: "song-d", genre: "Jazz" },
 };
 
 // Return song details when given a song ID
@@ -27,16 +30,13 @@ test("Only songs heard on every listening day are returned", () => {
     { song_id: "song-b", timestamp: "2024-08-02T11:00:00" },
 
     { song_id: "song-a", timestamp: "2024-08-03T10:00:00" },
-    { song_id: "song-b", timestamp: "2024-08-03T11:00:00" }
+    { song_id: "song-b", timestamp: "2024-08-03T11:00:00" },
   ];
 
-  const result = getSongsListenedToEveryDayFromEvents(
-    events,
-    getTestSong
-  );
+  const result = getSongsListenedToEveryDayFromEvents(events, getTestSong);
 
   assert.deepEqual(
-    result.map(song => song.id),
+    result.map((song) => song.id),
     ["song-a", "song-b"]
   );
 });
@@ -50,12 +50,10 @@ test("Top three genres are ranked by listening-event count", () => {
     { song_id: "song-b" },
     { song_id: "song-b" },
     { song_id: "song-c" },
-    { song_id: "song-d" }
+    { song_id: "song-d" },
   ];
 
   const result = getTopGenresFromEvents(events, getTestSong);
 
   assert.deepEqual(result, ["Pop", "Folk", "Punk"]);
 });
-
-
